@@ -18,7 +18,7 @@ class Grailed:
         self.host = host
         self.target_brand = target_brand
         self.driver = webdriver.Chrome() 
-        self.df = DataFrame(columns=['brand', 'category', 'desc', 'size', 'price', 'img'])
+        self.df = DataFrame(columns=['brand', 'category', 'desc', 'size', 'price', 'img', 'link'])
         self.token = "283346046:AAECp_TRKwCUJ1E6Xf9sVSBRHtDVzM7aHjE"
         self.dodo = 118931446
         self.bot = telepot.Bot(self.token)
@@ -52,7 +52,7 @@ class Grailed:
         self.num_pages(pages)
 
     def parse_data(self):
-        temp_df = DataFrame(columns=['brand', 'category', 'desc', 'size', 'price', 'img'])
+        temp_df = DataFrame(columns=['brand', 'category', 'desc', 'size', 'price', 'img', 'link'])
         res = self.driver.page_source
         soup = BeautifulSoup(res, 'lxml')
 
@@ -64,11 +64,12 @@ class Grailed:
             listing_title = item.find_all('h3', attrs={'class':'listing-title'})
             listing_size = item.find_all('h2', attrs={'class':'listing-size'})
             price = item.find_all('h2', attrs={'class':'original-price'})
+            link = item.find_all('a')
             if not len(brand):                # or brand[0].text not in target_brand:
                 continue
             if int(price[0].span.text[1:]) >= 200:
                 continue
-            temp_df.loc[i] = [brand[0].text, self.categorize(listing_size[0].text),  listing_title[0].text, listing_size[0].text, int(price[0].span.text[1:]), img[0]['src']]
+            temp_df.loc[i] = [brand[0].text, self.categorize(listing_size[0].text),  listing_title[0].text, listing_size[0].text, int(price[0].span.text[1:]), img[0]['src'], link[0]['href']]
             i += 1
 
             # print(brand[0].text)
@@ -87,7 +88,7 @@ class Grailed:
 
     def search(self, brand, low=0, high=200):
         results = self.df[self.df['brand'] == brand]
-        for text in results['price'].values.tolist():
+        for text in results['link']:
             self.sendMsg(text)
         # self.sendMsg(text for text in results['price']) #and self.df['price'] < high])
         # print(self.df.query('brand == "{0}".format(brand)'))# & price > 0 & price < 200'))#
