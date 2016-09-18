@@ -89,7 +89,7 @@ class Grailed:
     def search(self, brand, low=0, high=200):
         results = self.df[self.df['brand'] == brand]
         for text in results['link']:
-            self.sendMsg(text)
+            self.sendMsg(self.host + text)
         # self.sendMsg(text for text in results['price']) #and self.df['price'] < high])
         # print(self.df.query('brand == "{0}".format(brand)'))# & price > 0 & price < 200'))#
 

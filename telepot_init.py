@@ -13,6 +13,8 @@ def mimic(msg):
     print(content_type, chat_type, chat_id)
 
     if content_type == 'text':
+        print(msg['first_name'])
+        print(msg['text'])
         bot.sendMessage(chat_id, msg['text'])
 
 # bot.message_loop(mimic)
